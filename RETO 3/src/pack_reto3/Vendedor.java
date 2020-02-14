@@ -58,5 +58,6 @@ public class Vendedor {
 	
 	public void cargarVendedores() throws FileNotFoundException {
 		FileInputStream Vendedores = new FileInputStream("C:\\RETO3\\Vendedores.dat");
+		boolean hola;
 	}
 }
