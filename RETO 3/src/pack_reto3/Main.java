@@ -151,15 +151,7 @@ public class Main {
 	
 	public static void aniadirVendedores() throws IOException {
 		File fichero = new File("C:\\RETO3\\Vendedores.dat");
-		if(!fichero.exists()) {
-			fichero.createNewFile();
-		}
-		FileOutputStream Vendedores = new FileOutputStream(fichero);
-		FileOutputStream Vendedores2 = new FileOutputStream(fichero.getAbsoluteFile(), true);
-		ObjectOutputStream aniadirVentas;
-		MiObjectOutputStream aniadirVentasCabecera;
-		
-		
+
 		System.out.println("Introduce un codigo de empleado");
 		int codEmp = sc.nextInt();
 		sc.nextLine();
@@ -173,20 +165,23 @@ public class Main {
 		
 		Vendedor vendedor = new Vendedor(codEmp, nombre, ventasMes, zona);
 		
-		if(fichero.length() == 0) {
-			aniadirVentas = new ObjectOutputStream(Vendedores);
-			aniadirVentas.writeObject(vendedor);
-			aniadirVentas.close();
-		}else {
-			aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
+		if(fichero.exists()) {
+			FileOutputStream Vendedores2 = new FileOutputStream(fichero, true);
+			MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
 			aniadirVentasCabecera.writeObject(vendedor);
 			aniadirVentasCabecera.close();
+			Vendedores2.close();
+			
+		}else {
+			FileOutputStream Vendedores = new FileOutputStream(fichero);
+			ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
+			aniadirVentas.writeObject(vendedor);
+			aniadirVentas.close();
+			Vendedores.close();
 		}
 		
 		
 		
-		Vendedores.close();
-		Vendedores2.close();
 	
 	}
 	
