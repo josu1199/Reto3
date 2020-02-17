@@ -1,7 +1,8 @@
 package pack_reto3;
 import java.io.*;
+import java.util.*;
 
-public class Vendedor {
+public class Vendedor implements Serializable{
 
 	private int codEmp;
 	private String nombre;
@@ -56,8 +57,4 @@ public class Vendedor {
 				+ "]";
 	}
 	
-	public void cargarVendedores() throws FileNotFoundException {
-		FileInputStream Vendedores = new FileInputStream("C:\\RETO3\\Vendedores.dat");
-		boolean hola;
-	}
 }

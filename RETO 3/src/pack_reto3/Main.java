@@ -7,7 +7,7 @@ public class Main {
 
 	static Scanner sc = new Scanner(System.in);
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
 		boolean salir = false;
 		int opcCliente, opcVendedor, opcZona, opcInicial;
@@ -44,12 +44,19 @@ public class Main {
 			case 2:
 				System.out.println("SOBRE VENDEDORES: \n" + 
 									"1.Cargar Vendedores \n" +
-									"2.Volcar Ventas \n" +
-									"3.Copia de Seguridad \n" +
-									"4.Listado Vendedores \n");
+									"2.Añadir Vendedores \n" +
+									"3.Volcar Ventas \n" +
+									"4.Copia de Seguridad \n" +
+									"5.Listado Vendedores \n");
 				opcVendedor = sc.nextInt();
 				switch(opcVendedor) {
-				
+				case 1:
+					 cargarVendedores();
+					 break;
+				case 2:
+					aniadirVendedores();
+					break;
+					 
 				}
 				break;
 			case 3:
@@ -118,6 +125,69 @@ public class Main {
 	public static void borrar() {
 		File fich = new File("C:\\RETO3\\CLIENTES.DAT");
 		fich.delete();
+	}
+	
+	public static void cargarVendedores() throws IOException{
+		FileInputStream Vendedores = new FileInputStream("C:\\RETO3\\Vendedores.dat");
+		ObjectInputStream leerVentas = new ObjectInputStream(Vendedores);
+		ArrayList<Vendedor> listaVendedores = new ArrayList<Vendedor>();
+		
+		try {
+			Vendedor vendedor = (Vendedor)leerVentas.readObject();
+			while(true) {
+				listaVendedores.add(vendedor);
+				vendedor = (Vendedor)leerVentas.readObject();
+			}
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			System.out.println("No quedan mas objetos");
+			leerVentas.close();
+			
+		} catch (ClassNotFoundException c) {
+			System.out.println("Error");
+		}
+		
+	}
+	
+	public static void aniadirVendedores() throws IOException {
+		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		if(!fichero.exists()) {
+			fichero.createNewFile();
+		}
+		FileOutputStream Vendedores = new FileOutputStream(fichero);
+		FileOutputStream Vendedores2 = new FileOutputStream(fichero.getAbsoluteFile(), true);
+		ObjectOutputStream aniadirVentas;
+		MiObjectOutputStream aniadirVentasCabecera;
+		
+		
+		System.out.println("Introduce un codigo de empleado");
+		int codEmp = sc.nextInt();
+		sc.nextLine();
+		System.out.println("Introduce un nombre");
+		String nombre = sc.nextLine();
+		System.out.println("Introduce el numero de ventas del empleado");
+		int ventasMes = sc.nextInt();
+		sc.nextLine();
+		System.out.println("Introduce una zona");
+		String zona = sc.nextLine();
+		
+		Vendedor vendedor = new Vendedor(codEmp, nombre, ventasMes, zona);
+		
+		if(fichero.length() == 0) {
+			aniadirVentas = new ObjectOutputStream(Vendedores);
+			aniadirVentas.writeObject(vendedor);
+			aniadirVentas.close();
+		}else {
+			aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
+			aniadirVentasCabecera.writeObject(vendedor);
+			aniadirVentasCabecera.close();
+		}
+		
+		
+		
+		Vendedores.close();
+		Vendedores2.close();
+	
 	}
 	
 }
