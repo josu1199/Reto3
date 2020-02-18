@@ -56,7 +56,9 @@ public class Main {
 				case 2:
 					aniadirVendedores();
 					break;
-					 
+				case 5:
+					listarVendedores();
+					break;
 				}
 				break;
 			case 3:
@@ -126,18 +128,28 @@ public class Main {
 		File fich = new File("C:\\RETO3\\CLIENTES.DAT");
 		fich.delete();
 	}
-	
+
 	public static void cargarVendedores() throws IOException{
-		FileInputStream Vendedores = new FileInputStream("C:\\RETO3\\Vendedores.dat");
-		ObjectInputStream leerVentas = new ObjectInputStream(Vendedores);
-		ArrayList<Vendedor> listaVendedores = new ArrayList<Vendedor>();
+		int cont = 0;
+		
+		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		
+		FileInputStream VendedoresI = new FileInputStream(fichero);
+		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+		
+		FileOutputStream VendedoresO = new FileOutputStream(fichero);
+		
+		Vendedor[] listaVendedores = new Vendedor[12];
 		
 		try {
-			Vendedor vendedor = (Vendedor)leerVentas.readObject();
 			while(true) {
-				listaVendedores.add(vendedor);
-				vendedor = (Vendedor)leerVentas.readObject();
+				System.out.println(cont);
+				Vendedor vendedor = (Vendedor)leerVentas.readObject();
+				listaVendedores[cont] = vendedor;
+				cont++;
+				
 			}
+			
 		} catch (EOFException e) {
 			// TODO Auto-generated catch block
 			System.out.println("No quedan mas objetos");
@@ -146,7 +158,23 @@ public class Main {
 		} catch (ClassNotFoundException c) {
 			System.out.println("Error");
 		}
+
+		fichero.delete();
 		
+		for(int i = 0; listaVendedores.length > i; i++) {
+			listaVendedores[i].setVentasMes(0);
+			if(fichero.exists()) {
+				MiObjectOutputStream escribirVentas = new MiObjectOutputStream(VendedoresO);
+				escribirVentas.writeObject(listaVendedores[i]);
+				escribirVentas.close();
+			}else {
+				ObjectOutputStream escribirVentas = new ObjectOutputStream(VendedoresO);
+				escribirVentas.writeObject(listaVendedores[i]);
+				escribirVentas.close();
+			}
+		}
+		VendedoresO.close();		
+		VendedoresI.close();
 	}
 	
 	public static void aniadirVendedores() throws IOException {
@@ -178,11 +206,32 @@ public class Main {
 			aniadirVentas.writeObject(vendedor);
 			aniadirVentas.close();
 			Vendedores.close();
-		}
-		
-		
-		
+		}	
+	}
 	
+	public static void listarVendedores() throws IOException {
+		String mensaje;
+		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		
+		FileInputStream VendedoresI = new FileInputStream(fichero);
+		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+		
+		try {
+			while(true) {
+					Vendedor vendedor = (Vendedor)leerVentas.readObject();
+					mensaje = vendedor.toString();
+					System.out.println(mensaje);
+			}
+			
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			System.out.println("No quedan mas objetos");
+			leerVentas.close();
+		
+		} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+			System.out.println("Error");
+		}
 	}
 	
 }
