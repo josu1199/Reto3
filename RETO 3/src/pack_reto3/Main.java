@@ -56,6 +56,9 @@ public class Main {
 				case 2:
 					aniadirVendedores();
 					break;
+				case 4:
+					copiaSeguridad();
+					break;
 				case 5:
 					listarVendedores();
 					break;
@@ -129,52 +132,68 @@ public class Main {
 		fich.delete();
 	}
 
-	public static void cargarVendedores() throws IOException{
+	public static void cargarVendedores() {
 		int cont = 0;
 		
 		File fichero = new File("C:\\RETO3\\Vendedores.dat");
 		
-		FileInputStream VendedoresI = new FileInputStream(fichero);
-		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
-		
-		FileOutputStream VendedoresO = new FileOutputStream(fichero);
-		
-		Vendedor[] listaVendedores = new Vendedor[12];
-		
 		try {
-			while(true) {
-				System.out.println(cont);
-				Vendedor vendedor = (Vendedor)leerVentas.readObject();
-				listaVendedores[cont] = vendedor;
-				cont++;
+			FileInputStream VendedoresI = new FileInputStream(fichero);
+			ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+			
+			
+			
+			Vendedor[] listaVendedores = new Vendedor[12];
+			
+			try {
+				while(true) {
+					
+					Vendedor vendedor = (Vendedor)leerVentas.readObject();
+					System.out.println(cont);
+					listaVendedores[cont] = vendedor;
+					cont++;
+					
+				}
 				
+			} catch (EOFException e) {
+				// TODO Auto-generated catch block
+				System.out.println("No quedan mas objetos");
+				leerVentas.close();
+				
+			} catch (ClassNotFoundException c) {
+				System.out.println("Error");
 			}
+	
+			fichero.delete();
+			boolean salir = false;
 			
-		} catch (EOFException e) {
-			// TODO Auto-generated catch block
-			System.out.println("No quedan mas objetos");
-			leerVentas.close();
+			for(int i = 0; listaVendedores.length > i && !salir; i++) {
+				listaVendedores[i].setVentasMes(0);
+				if(fichero.exists()) {
+					FileOutputStream VendedoresO = new FileOutputStream(fichero, true);
+					MiObjectOutputStream escribirVentas = new MiObjectOutputStream(VendedoresO);
+					Vendedor vendedor = listaVendedores[i];
+					escribirVentas.writeObject(vendedor);
+					escribirVentas.close();
+					VendedoresO.close();
+				}else {
+					FileOutputStream VendedoresO = new FileOutputStream(fichero);
+					ObjectOutputStream escribirVentas = new ObjectOutputStream(VendedoresO);
+					Vendedor vendedor = listaVendedores[i];
+					escribirVentas.writeObject(vendedor);
+					escribirVentas.close();
+					VendedoresO.close();
+				}
+				
+				if(listaVendedores[i+1] == null) {
+					salir = true;
+				}
+			}
+			VendedoresI.close();
+		}catch(IOException i){
 			
-		} catch (ClassNotFoundException c) {
-			System.out.println("Error");
 		}
-
-		fichero.delete();
 		
-		for(int i = 0; listaVendedores.length > i; i++) {
-			listaVendedores[i].setVentasMes(0);
-			if(fichero.exists()) {
-				MiObjectOutputStream escribirVentas = new MiObjectOutputStream(VendedoresO);
-				escribirVentas.writeObject(listaVendedores[i]);
-				escribirVentas.close();
-			}else {
-				ObjectOutputStream escribirVentas = new ObjectOutputStream(VendedoresO);
-				escribirVentas.writeObject(listaVendedores[i]);
-				escribirVentas.close();
-			}
-		}
-		VendedoresO.close();		
-		VendedoresI.close();
 	}
 	
 	public static void aniadirVendedores() throws IOException {
@@ -231,6 +250,48 @@ public class Main {
 		} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 			System.out.println("Error");
+		}
+	}
+	
+	public static void copiaSeguridad() {
+		String ruta;
+		Scanner sc = new Scanner(System.in);
+		System.out.println("Introduce la fecha a dia de hoy");
+		ruta = sc.nextLine();
+		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		File ficheroCopia = new File("C:\\RETO3\\" + ruta + ".dat");
+		
+		try {
+			FileInputStream VendedoresI = new FileInputStream(fichero);
+			ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+			FileOutputStream Vendedores2 = new FileOutputStream(ficheroCopia, true);
+			FileOutputStream Vendedores = new FileOutputStream(ficheroCopia);
+			MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
+			ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
+
+			
+			while(true) {
+				Vendedor vendedor;
+				vendedor = (Vendedor)leerVentas.readObject();
+				if(ficheroCopia.exists()) {
+					aniadirVentasCabecera.writeObject(vendedor);
+					aniadirVentasCabecera.close();
+					
+				}else {
+					aniadirVentas.writeObject(vendedor);
+					aniadirVentas.close();
+					Vendedores2.close();
+					Vendedores.close();
+				}
+
+				leerVentas.close();
+			}
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error");
+		} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
 		}
 	}
 	
