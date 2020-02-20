@@ -253,7 +253,7 @@ public class Main {
 		}
 	}
 	
-	public static void copiaSeguridad() {
+	public static void copiaSeguridad() throws IOException {
 		String ruta;
 		Scanner sc = new Scanner(System.in);
 		System.out.println("Introduce la fecha a dia de hoy");
@@ -261,35 +261,36 @@ public class Main {
 		File fichero = new File("C:\\RETO3\\Vendedores.dat");
 		File ficheroCopia = new File("C:\\RETO3\\" + ruta + ".dat");
 		
+		FileInputStream VendedoresI = new FileInputStream(fichero);
+		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+		FileOutputStream Vendedores2 = new FileOutputStream(ficheroCopia, true);
+		FileOutputStream Vendedores = new FileOutputStream(ficheroCopia);
+		MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
+		ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
+		
 		try {
-			FileInputStream VendedoresI = new FileInputStream(fichero);
-			ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
-			FileOutputStream Vendedores2 = new FileOutputStream(ficheroCopia, true);
-			FileOutputStream Vendedores = new FileOutputStream(ficheroCopia);
-			MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
-			ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
-
 			
-			while(true) {
-				Vendedor vendedor;
-				vendedor = (Vendedor)leerVentas.readObject();
+			while(true) {	
+				Vendedor vendedor = (Vendedor)leerVentas.readObject();
 				if(ficheroCopia.exists()) {
 					aniadirVentasCabecera.writeObject(vendedor);
-					aniadirVentasCabecera.close();
-					
+				
 				}else {
 					aniadirVentas.writeObject(vendedor);
-					aniadirVentas.close();
-					Vendedores2.close();
-					Vendedores.close();
+					
 				}
-
-				leerVentas.close();
+				System.out.println("vuelta");
 			}
 			
-		} catch (IOException e) {
+		} catch (EOFException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error");
+			aniadirVentas.close();
+			aniadirVentasCabecera.close();
+			Vendedores2.close();
+			Vendedores.close();
+			leerVentas.close();
+			
 		} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
 		}
