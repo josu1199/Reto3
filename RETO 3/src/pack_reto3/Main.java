@@ -346,7 +346,11 @@ public class Main {
 	}
 	
 	public static void aniadirVendedores() throws IOException {
-		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		File ruta = new File("C:\\RETO3");
+		File fichero = new File(ruta, "Vendedores.dat");
+		if(!ruta.exists()) {
+			ruta.mkdir();
+		}
 
 		System.out.println("Introduce un codigo de empleado");
 		int codEmp = sc.nextInt();
