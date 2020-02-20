@@ -27,6 +27,11 @@ public class Cliente implements Serializable{
 		return "Cliente [NIF=" + NIF + ", nombre=" + nombre + ", telefono=" + telefono + ", direccion=" + direccion
 				+ ", deuda=" + deuda + "]";
 	}
+	
+	public String generarInforme() {
+		return "[NIF: " + NIF + ", Deuda: " + deuda + "€]";
+	}
+
 
 	public String getNIF() {
 		return NIF;

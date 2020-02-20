@@ -6,8 +6,10 @@ import java.util.*;
 public class Main {
 
 	static Scanner sc = new Scanner(System.in);
+	static ArrayList<Cliente> listaClientes = new ArrayList();
+	static ArrayList<Cliente> copiaLista = listaClientes;
 	
-	public static void main(String[] args) throws IOException {
+	public static void main(String[] args) throws IOException, ClassNotFoundException {
 		// TODO Auto-generated method stub
 		boolean salir = false;
 		int opcCliente, opcVendedor, opcZona, opcInicial;
@@ -31,13 +33,25 @@ public class Main {
 				opcCliente = sc.nextInt();
 				switch(opcCliente) {
 					case 1:
+						sc.nextLine();
 						aniadirCliente();
 						break;
 					case 2:
 						leerFichero();
 						break;
 					case 3:
-						borrar();
+						sc.nextLine();
+						buscarClientes();
+						break;
+					case 4:
+						sc.nextLine();
+						borrarCliente();
+						break;
+					case 5:
+						borrarFichero();
+						break;
+					case 6:
+						informeDeudas();
 						break;
 				}
 				break;
@@ -83,53 +97,188 @@ public class Main {
 		String NIF, nombre, direccion;
 		int telefono, deuda;
 		try {
-			File fichero = new File("C:\\RETO3\\CLIENTES.DAT");
-			fichero.createNewFile();
-			FileOutputStream fos = new FileOutputStream(fichero);
-			ObjectOutputStream ficheroSalida = new ObjectOutputStream(fos);
+			File ruta = new File("C:\\RETO3ARCHIVOS");
+			File fichero = new File(ruta, "CLIENTES.DAT");
+			if(!ruta.exists()) {
+				ruta.mkdir();
+			}
+
 			System.out.println("Introduce NIF: ");
 			NIF = sc.nextLine();
-			sc.nextLine();
 			System.out.println("Introduce nombre: ");
 			nombre = sc.nextLine();
 			System.out.println("Introduce telefono: ");
 			telefono = sc.nextInt();
+			sc.nextLine();
 			System.out.println("Introduce Direccion: ");
 			direccion = sc.nextLine();
-			sc.nextLine();
 			System.out.println("Introduce deuda: ");
 			deuda = sc.nextInt();
-			Cliente cliente = new Cliente(NIF, nombre, telefono, direccion, deuda);
-			ficheroSalida.writeObject(cliente);
-			ficheroSalida.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public static void leerFichero() {
-		Cliente c;
-		
-		try {
-			File fichero = new File("C:\\RETO3\\CLIENTES.DAT");
-			FileInputStream fos = new FileInputStream(fichero);
-			ObjectInputStream ficheroLectura = new ObjectInputStream(fos);
-			c = (Cliente) ficheroLectura.readObject();
-			c.mostrarCliente();
 			
+			Cliente cliente = new Cliente(NIF, nombre, telefono, direccion, deuda);
+			
+			if(fichero.exists()) {
+				FileOutputStream fos2 = new FileOutputStream(fichero, true);
+				MiObjectOutputStream ficheroSinCabecera = new MiObjectOutputStream(fos2);
+				ficheroSinCabecera.writeObject(cliente);
+				ficheroSinCabecera.close();
+				fos2.close();
+			}else{
+				FileOutputStream fos1 = new FileOutputStream(fichero);
+				ObjectOutputStream ficheroSalida = new ObjectOutputStream(fos1);
+				ficheroSalida.writeObject(cliente);
+				ficheroSalida.close();
+				fos1.close();
+			}
+			
+			listaClientes.add(cliente);
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public static void borrar() {
-		File fich = new File("C:\\RETO3\\CLIENTES.DAT");
-		fich.delete();
+	public static void leerFichero() throws ClassNotFoundException, IOException, FileNotFoundException {
+			File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
+			FileInputStream fis = new FileInputStream(fichero);
+			ObjectInputStream ficheroLectura = new ObjectInputStream(fis);
+			Cliente c;
+			
+			try {	
+				while(true) {
+					c = (Cliente) ficheroLectura.readObject();
+					System.out.printf("\nCliente: %s\n",c.toString());
+				}			
+			} catch(ClassNotFoundException e){
+				
+		    } catch(EOFException e){
+		    
+			} catch(IOException e){
+				
+			} finally {
+				fis.close();
+				ficheroLectura.close();
+			}				
+	}
+	
+	public static void buscarClientes() throws IOException, ClassNotFoundException {
+		Cliente c = null;
+		String compDNI;
+		boolean encontrado = false;
+		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
+		FileInputStream fos = new FileInputStream(fichero);
+		ObjectInputStream ficheroLectura = new ObjectInputStream(fos);	
+		System.out.println("Introduce el dni del cliente a comprobar: ");
+		compDNI = sc.nextLine();
+		try {
+			while(!encontrado) {
+				c = (Cliente) ficheroLectura.readObject();
+				if(c.getNIF().equals(compDNI)) {
+					encontrado = true;
+				}
+				
+			}			
+			
+		} catch (EOFException e) {
+			
+		}
+		
+		if(encontrado == true) {
+			System.out.println("EL CLIENTE EXISTE");
+			System.out.println(c.toString());
+		}
+		else {
+			System.out.println("EL CLIENTE NO EXISTE");
+		}
+		
+	}
+	
+	public static void borrarCliente() throws IOException, ClassNotFoundException {
+		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
+		fichero.delete();
+		
+		String dni;
+		Cliente cliente = null;
+		
+		boolean existe = false;
+		
+		System.out.println("INTRODUCE DNI");
+		dni = sc.nextLine();
+		
+		for(Cliente c: listaClientes) {
+			if(c.getNIF().equals(dni)) {
+				existe = true;
+				cliente = c;
+			}
+		}
+		if(existe == true) {
+			copiaLista.remove(cliente);
+			System.out.println("CLIENTE BORRADO");
+			for(int i = 0; i < copiaLista.size(); i++) {
+				cliente = copiaLista.get(i);
+				if(i == 0) {
+					FileOutputStream fos1 = new FileOutputStream(fichero);
+					ObjectOutputStream ficheroSalida = new ObjectOutputStream(fos1);
+					ficheroSalida.writeObject(cliente);
+					ficheroSalida.close();
+					fos1.close();
+				}else{
+					FileOutputStream fos2 = new FileOutputStream(fichero, true);
+					MiObjectOutputStream ficheroSinCabecera = new MiObjectOutputStream(fos2);
+					ficheroSinCabecera.writeObject(cliente);
+					ficheroSinCabecera.close();
+					fos2.close();		
+				}
+			}
+		}
+		else {
+			System.out.println("EL CLIENTE QUE QUIERES BORRAR NO EXISTE \nA CONTINUACION TE MOSTRAMOS LOS CLIENTES LISTADOS");
+		}
+	}
+	
+	public static void borrarFichero() {
+		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
+		fichero.delete();
+		System.out.println("EL FICHERO SE BORRO COMPLETAMENTE");
+	}
+	
+	public static void informeDeudas() throws IOException {
+		Cliente cliente;
+		File deudas = new File("C:\\RETO3ARCHIVOS\\DEUDAS.txt");
+		for(int i = 0; i < copiaLista.size(); i++) {
+			cliente = copiaLista.get(i);
+			if(i == 0) {
+				FileOutputStream fos1 = new FileOutputStream(deudas);
+				ObjectOutputStream ficheroSalida = new ObjectOutputStream(fos1);
+				ficheroSalida.writeObject(cliente);
+				ficheroSalida.close();
+				fos1.close();
+			}else{
+				FileOutputStream fos2 = new FileOutputStream(deudas, true);
+				MiObjectOutputStream ficheroSinCabecera = new MiObjectOutputStream(fos2);
+				ficheroSinCabecera.writeObject(cliente);
+				ficheroSinCabecera.close();
+				fos2.close();		
+			}
+		}
+		System.out.println("FICHERO CREADO, SE MOSTRARA SU CONTENIDO A CONTINUACION: ");
+
+		FileInputStream fis = new FileInputStream(deudas);
+		ObjectInputStream ficheroLectura = new ObjectInputStream(fis);
+		
+		try {	
+			while(true) {
+				cliente = (Cliente) ficheroLectura.readObject();
+				System.out.printf("\nCliente: %s\n",cliente.generarInforme());
+			}			
+		} catch(ClassNotFoundException e){
+			
+	    } catch(EOFException e){
+	    	
+	    }finally {
+			fis.close();
+			ficheroLectura.close();
+	    }	
 	}
 
 	public static void cargarVendedores() {
