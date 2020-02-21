@@ -362,6 +362,11 @@ public class Main {
 		sc.nextLine();
 		System.out.println("Introduce una zona");
 		String zona = sc.nextLine();
+		while(zona != "Norte" && zona != "Sur" && zona != "Este" && zona != "Oeste") {
+			System.out.println("Introduce una zona");
+			zona = sc.nextLine();
+		}
+		
 		
 		Vendedor vendedor = new Vendedor(codEmp, nombre, ventasMes, zona);
 		
@@ -407,12 +412,17 @@ public class Main {
 	}
 	
 	public static void copiaSeguridad() throws IOException {
-		String ruta;
+		String dia, mes, anio;
 		Scanner sc = new Scanner(System.in);
-		System.out.println("Introduce la fecha a dia de hoy");
-		ruta = sc.nextLine();
+		
+		GregorianCalendar gregCal = new GregorianCalendar();
+		dia = Integer.toString(gregCal.get(Calendar.DATE)); //CON ESTO LO DEFINE COMO EL DIA ACTUAL QUE MUESTRA EL SISTEMA
+		mes = Integer.toString(gregCal.get(Calendar.MONTH) + 1); //CON ESTO LO DEFINE COMO EL MES ACTUAL QUE MUESTRA EL SISTEMA
+		anio = Integer.toString(gregCal.get(Calendar.YEAR)); //CON ESTO LO DEFINE COMO EL AÑO ACTUAL QUE MUESTRA EL SISTEMA
+		
 		File fichero = new File("C:\\RETO3\\Vendedores.dat");
-		File ficheroCopia = new File("C:\\RETO3\\" + ruta + ".dat");
+		File ficheroCopia = new File("C:\\RETO3\\" + dia + "-" + mes + "-" + anio + ".dat");
+		
 		
 		FileInputStream VendedoresI = new FileInputStream(fichero);
 		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
