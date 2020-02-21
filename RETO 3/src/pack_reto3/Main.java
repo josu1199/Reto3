@@ -362,11 +362,10 @@ public class Main {
 		sc.nextLine();
 		System.out.println("Introduce una zona");
 		String zona = sc.nextLine();
-		while(zona != "Norte" && zona != "Sur" && zona != "Este" && zona != "Oeste") {
+		while(!zona.equals("Norte") && !zona.equals("Sur") && !zona.equals("Este") && !zona.equals("Oeste")) {
 			System.out.println("Introduce una zona");
 			zona = sc.nextLine();
 		}
-		
 		
 		Vendedor vendedor = new Vendedor(codEmp, nombre, ventasMes, zona);
 		
@@ -453,6 +452,43 @@ public class Main {
 			Vendedores2.close();
 			Vendedores.close();
 			leerVentas.close();
+			
+		} catch (ClassNotFoundException e) {
+					// TODO Auto-generated catch block
+		}
+	}
+	
+	public static void volcarVentas() throws IOException {
+		Scanner sc = new Scanner(System.in);
+		int mes;
+		System.out.println("Introduce el mes actual");
+		mes = sc.nextInt();
+		
+		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		File ficheroNuevo = new File("C:\\RETO3\\VentasZona.dat");
+		
+		FileInputStream VendedoresI = new FileInputStream(fichero);
+		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+		
+		FileOutputStream Vendedores2 = new FileOutputStream(ficheroNuevo, true);
+		FileOutputStream Vendedores = new FileOutputStream(ficheroNuevo);
+		MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
+		ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
+		
+		try {
+			
+			while(true) {	
+				Vendedor vendedor = (Vendedor)leerVentas.readObject();
+				
+				if(vendedor.getZona().equals("Norte")) {
+					
+				}
+				
+			}
+			
+		} catch (EOFException e) {
+			// TODO Auto-generated catch block
+			System.out.println("Error");
 			
 		} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block
