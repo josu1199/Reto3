@@ -483,7 +483,15 @@ public class Main {
 				if(vendedor.getZona().equals("Norte")) {
 					
 				}
-				
+				else if(vendedor.getZona().equals("Sur")) {
+					
+				}
+				else if(vendedor.getZona().equals("Este")) {
+					
+				}
+				else if(vendedor.getZona().equals("Oeste")) {
+					
+				}
 			}
 			
 		} catch (EOFException e) {
