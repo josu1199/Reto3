@@ -70,6 +70,9 @@ public class Main {
 				case 2:
 					aniadirVendedores();
 					break;
+				case 3:
+					volcarVentas();
+					break;
 				case 4:
 					copiaSeguridad();
 					break;
@@ -284,13 +287,15 @@ public class Main {
 	public static void cargarVendedores() {
 		int cont = 0;
 		
-		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		File ruta = new File("C:\\RETO3");
+		File fichero = new File(ruta, "Vendedores.dat");
+		if(!ruta.exists()) {
+			ruta.mkdir();
+		}
 		
 		try {
 			FileInputStream VendedoresI = new FileInputStream(fichero);
 			ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
-			
-			
 			
 			Vendedor[] listaVendedores = new Vendedor[12];
 			
@@ -460,43 +465,90 @@ public class Main {
 	
 	public static void volcarVentas() throws IOException {
 		Scanner sc = new Scanner(System.in);
-		int mes;
+		int mes, cont = 0;
 		System.out.println("Introduce el mes actual");
 		mes = sc.nextInt();
 		
-		File fichero = new File("C:\\RETO3\\Vendedores.dat");
-		File ficheroNuevo = new File("C:\\RETO3\\VentasZona.dat");
+		File ruta = new File("C:\\RETO3");
+		File ficheroNuevo = new File(ruta, "VentasZona.dat");
+		File fichero = new File(ruta, "Vendedores.dat");
+		if(!ruta.exists()) {
+			ruta.mkdir();
+		}
 		
-		FileInputStream VendedoresI = new FileInputStream(fichero);
-		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
+		FileInputStream ventas = new FileInputStream(fichero);
+		ObjectInputStream leerVentas = new ObjectInputStream(ventas);
 		
+		System.out.println("Error");
 		FileOutputStream Vendedores2 = new FileOutputStream(ficheroNuevo, true);
 		FileOutputStream Vendedores = new FileOutputStream(ficheroNuevo);
 		MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
 		ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
 		
+		VentasZona norte = new VentasZona();
+		VentasZona sur = new VentasZona();
+		VentasZona este = new VentasZona();
+		VentasZona oeste = new VentasZona();
+		
+		
+		
 		try {
-			
-			while(true) {	
+			if(!ficheroNuevo.exists()) {
+				while(true) {	
 				Vendedor vendedor = (Vendedor)leerVentas.readObject();
-				
-				if(vendedor.getZona().equals("Norte")) {
-					
+					if(vendedor.getZona().equals("Norte")) {
+						norte.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Sur")) {
+						sur.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Este")) {
+						este.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Oeste")) {
+						oeste.sumarVentas(mes, vendedor.getVentasMes());
+					}
 				}
-				else if(vendedor.getZona().equals("Sur")) {
-					
-				}
-				else if(vendedor.getZona().equals("Este")) {
-					
-				}
-				else if(vendedor.getZona().equals("Oeste")) {
-					
+			}else if(ficheroNuevo.exists()) {
+				FileInputStream zonas = new FileInputStream(ficheroNuevo);
+				ObjectInputStream leerZonas = new ObjectInputStream(zonas);
+				norte = (VentasZona)leerZonas.readObject();
+				sur = (VentasZona)leerZonas.readObject();
+				este = (VentasZona)leerZonas.readObject();
+				oeste = (VentasZona)leerZonas.readObject();			
+				leerZonas.close();
+				while(true) {
+					Vendedor vendedor = (Vendedor)leerVentas.readObject();
+					if(vendedor.getZona().equals("Norte")) {
+						norte.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Sur")) {
+						sur.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Este")) {
+						este.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Oeste")) {
+						oeste.sumarVentas(mes, vendedor.getVentasMes());
+					};
 				}
 			}
 			
 		} catch (EOFException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error");
+			if(ficheroNuevo.exists()) {
+				ficheroNuevo.delete();
+			}
+			aniadirVentas.writeObject(norte);
+			aniadirVentasCabecera.writeObject(sur);
+			aniadirVentasCabecera.writeObject(este);
+			aniadirVentasCabecera.writeObject(oeste);
+			cargarVendedores();
+			leerVentas.close();
+
+			aniadirVentasCabecera.close();
+			aniadirVentas.close();
 			
 		} catch (ClassNotFoundException e) {
 					// TODO Auto-generated catch block

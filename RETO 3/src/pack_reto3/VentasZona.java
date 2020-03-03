@@ -1,6 +1,8 @@
 package pack_reto3;
 
-public class VentasZona {
+import java.io.Serializable;
+
+public class VentasZona implements Serializable{
 	private String zona;
 	private String responsable;
 	private int[] ventasMensuales;
@@ -33,4 +35,7 @@ public class VentasZona {
 		this.ventasMensuales[mes] = this.ventasMensuales[mes] + ventas;
 	}
 	
+	public void sumarVentas(int mes, int ventas) {
+		this.ventasMensuales[mes] = this.ventasMensuales[mes] + ventas;
+	}
 }
