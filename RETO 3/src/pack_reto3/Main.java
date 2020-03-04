@@ -484,15 +484,10 @@ public class Main {
 			ruta.mkdir();
 		}
 		
-		
-		
-		
 		VentasZona norte = new VentasZona();
 		VentasZona sur = new VentasZona();
 		VentasZona este = new VentasZona();
 		VentasZona oeste = new VentasZona();
-		
-		
 		
 		try {
 			if(!ficheroNuevo.exists()) {
@@ -603,7 +598,92 @@ public class Main {
 		}
 	}
 	
-	public static void listarZonas() {
+	public static void listarZonas() throws IOException {
+		boolean salir = false;
+		
+		File ruta = new File("C:\\RETO3");
+		File ficheroZona = new File(ruta, "VentasZona.dat");
+		
+		VentasZona norte = new VentasZona();
+		VentasZona sur = new VentasZona();
+		VentasZona este = new VentasZona();
+		VentasZona oeste = new VentasZona();
+		
+		FileInputStream zonas = new FileInputStream(ficheroZona);
+		ObjectInputStream leerZonas = new ObjectInputStream(zonas);
+		
+		try {
+			norte = (VentasZona)leerZonas.readObject();
+			sur = (VentasZona)leerZonas.readObject();
+			este = (VentasZona)leerZonas.readObject();
+			oeste = (VentasZona)leerZonas.readObject();			
+			
+			leerZonas.close();
+			
+			System.out.println("Meses:                      1    2    3   4   5   6   7   8   9   10   11   12");
+			
+			System.out.print("Ventas de la zona Norte: ");
+			for(int i = 0; i < norte.getVentasMensuales().length && !salir; i++) {
+				if(norte.getVentasMensuales()[i] == 0) {
+					salir = true;
+				}else {
+					System.out.print(norte.getVentasMensuales()[i] + "   ");
+				}
+				
+				if(norte.getVentasMensuales()[i+1] == 0) {
+					salir = true;
+				}
+			}
+			System.out.println("");
+			
+			System.out.print("Ventas de la zona Sur: ");
+			for(int i = 0; i < sur.getVentasMensuales().length && !salir; i++) {
+				if(sur.getVentasMensuales()[i] == 0) {
+					salir = true;
+				}else {
+					System.out.print(sur.getVentasMensuales()[i] + "   ");
+				}
+				
+				if(sur.getVentasMensuales()[i+1] == 0) {
+					salir = true;
+				}
+			}
+			System.out.println("");
+			
+			System.out.print("Ventas de la zona Este: ");
+			for(int i = 0; i < este.getVentasMensuales().length && !salir; i++) {
+				if(este.getVentasMensuales()[i] == 0) {
+					salir = true;
+				}else {
+					System.out.print(este.getVentasMensuales()[i] + "   ");
+				}
+				
+				if(este.getVentasMensuales()[i+1] == 0) {
+					salir = true;
+				}
+				System.out.println("");
+			}
+			System.out.println("");
+			
+			System.out.print("Ventas de la zona Oeste: ");
+			for(int i = 0; i < oeste.getVentasMensuales().length && !salir; i++) {
+				if(oeste.getVentasMensuales()[i] == 0) {
+					salir = true;
+				}else {
+					System.out.print(oeste.getVentasMensuales()[i] + "   ");
+				}
+				
+				if(oeste.getVentasMensuales()[i+1] == 0) {
+					salir = true;
+				}
+				System.out.println("");
+			}
+			System.out.println("");
+			System.out.println("");
+			
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+		}
 		
 	}
 }
