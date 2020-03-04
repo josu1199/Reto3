@@ -83,7 +83,13 @@ public class Main {
 				break;
 			case 3:
 				System.out.println("SOBRE ZONAS: \n" +
-									"1. Realizar listados \n");
+									"1. Listar ventas por zona \n");
+				opcZona = sc.nextInt();
+				switch(opcZona) {
+				case 1:
+					 listarZonas();
+					 break;
+				}
 				break;
 			case 0:
 				salir = true;
@@ -392,7 +398,8 @@ public class Main {
 	
 	public static void listarVendedores() throws IOException {
 		String mensaje;
-		File fichero = new File("C:\\RETO3\\Vendedores.dat");
+		File ruta = new File("C:\\RETO3");
+		File fichero = new File(ruta, "Vendedores.dat");
 		
 		FileInputStream VendedoresI = new FileInputStream(fichero);
 		ObjectInputStream leerVentas = new ObjectInputStream(VendedoresI);
@@ -466,6 +473,7 @@ public class Main {
 	public static void volcarVentas() throws IOException {
 		Scanner sc = new Scanner(System.in);
 		int mes, cont = 0;
+		Vendedor[] listaVendedores = new Vendedor[12];
 		System.out.println("Introduce el mes actual");
 		mes = sc.nextInt();
 		
@@ -476,14 +484,8 @@ public class Main {
 			ruta.mkdir();
 		}
 		
-		FileInputStream ventas = new FileInputStream(fichero);
-		ObjectInputStream leerVentas = new ObjectInputStream(ventas);
 		
-		System.out.println("Error");
-		FileOutputStream Vendedores2 = new FileOutputStream(ficheroNuevo, true);
-		FileOutputStream Vendedores = new FileOutputStream(ficheroNuevo);
-		MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores2);
-		ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores);
+		
 		
 		VentasZona norte = new VentasZona();
 		VentasZona sur = new VentasZona();
@@ -494,30 +496,10 @@ public class Main {
 		
 		try {
 			if(!ficheroNuevo.exists()) {
-				while(true) {	
-				Vendedor vendedor = (Vendedor)leerVentas.readObject();
-					if(vendedor.getZona().equals("Norte")) {
-						norte.sumarVentas(mes, vendedor.getVentasMes());
-					}
-					else if(vendedor.getZona().equals("Sur")) {
-						sur.sumarVentas(mes, vendedor.getVentasMes());
-					}
-					else if(vendedor.getZona().equals("Este")) {
-						este.sumarVentas(mes, vendedor.getVentasMes());
-					}
-					else if(vendedor.getZona().equals("Oeste")) {
-						oeste.sumarVentas(mes, vendedor.getVentasMes());
-					}
-				}
-			}else if(ficheroNuevo.exists()) {
-				FileInputStream zonas = new FileInputStream(ficheroNuevo);
-				ObjectInputStream leerZonas = new ObjectInputStream(zonas);
-				norte = (VentasZona)leerZonas.readObject();
-				sur = (VentasZona)leerZonas.readObject();
-				este = (VentasZona)leerZonas.readObject();
-				oeste = (VentasZona)leerZonas.readObject();			
-				leerZonas.close();
+				FileInputStream ventas = new FileInputStream(fichero);
+				ObjectInputStream leerVentas = new ObjectInputStream(ventas);
 				while(true) {
+					System.out.println("----");
 					Vendedor vendedor = (Vendedor)leerVentas.readObject();
 					if(vendedor.getZona().equals("Norte")) {
 						norte.sumarVentas(mes, vendedor.getVentasMes());
@@ -530,23 +512,89 @@ public class Main {
 					}
 					else if(vendedor.getZona().equals("Oeste")) {
 						oeste.sumarVentas(mes, vendedor.getVentasMes());
-					};
+					}
+					
+					listaVendedores[cont] = vendedor;
+					cont++;
+				}
+			}else if(ficheroNuevo.exists()) {
+				FileInputStream ventas = new FileInputStream(fichero);
+				ObjectInputStream leerVentas = new ObjectInputStream(ventas);
+				
+				FileInputStream zonas = new FileInputStream(ficheroNuevo);
+				ObjectInputStream leerZonas = new ObjectInputStream(zonas);
+				
+				norte = (VentasZona)leerZonas.readObject();
+				sur = (VentasZona)leerZonas.readObject();
+				este = (VentasZona)leerZonas.readObject();
+				oeste = (VentasZona)leerZonas.readObject();			
+				leerZonas.close();
+				while(true) {
+					System.out.println("----");
+					Vendedor vendedor = (Vendedor)leerVentas.readObject();
+					if(vendedor.getZona().equals("Norte")) {
+						norte.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Sur")) {
+						sur.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Este")) {
+						este.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					else if(vendedor.getZona().equals("Oeste")) {
+						oeste.sumarVentas(mes, vendedor.getVentasMes());
+					}
+					
+					listaVendedores[cont] = vendedor;
+					cont++;
 				}
 			}
 			
 		} catch (EOFException e) {
 			// TODO Auto-generated catch block
 			System.out.println("Error");
+			boolean salir = false;
 			if(ficheroNuevo.exists()) {
 				ficheroNuevo.delete();
 			}
-			aniadirVentas.writeObject(norte);
-			aniadirVentasCabecera.writeObject(sur);
-			aniadirVentasCabecera.writeObject(este);
-			aniadirVentasCabecera.writeObject(oeste);
-			cargarVendedores();
-			leerVentas.close();
-
+			
+			fichero.delete();
+			
+			FileOutputStream Vendedores2 = new FileOutputStream(ficheroNuevo, true);
+			MiObjectOutputStream aniadirZonasCabecera = new MiObjectOutputStream(Vendedores2);
+			FileOutputStream Vendedores = new FileOutputStream(ficheroNuevo);
+			ObjectOutputStream aniadirZonas = new ObjectOutputStream(Vendedores);
+			
+			aniadirZonas.writeObject(norte);
+			aniadirZonasCabecera.writeObject(sur);
+			aniadirZonasCabecera.writeObject(este);
+			aniadirZonasCabecera.writeObject(oeste);
+			
+			FileOutputStream Vendedores4 = new FileOutputStream(fichero, true);
+			FileOutputStream Vendedores3 = new FileOutputStream(fichero);
+			MiObjectOutputStream aniadirVentasCabecera = new MiObjectOutputStream(Vendedores4);
+			ObjectOutputStream aniadirVentas = new ObjectOutputStream(Vendedores3);
+			
+			for(int i = 0; i < listaVendedores.length && !salir; i++) {
+				System.out.println("----");
+				listaVendedores[i].setVentasMes(0);
+				
+				if(!fichero.exists()) {
+					Vendedor vendedor = listaVendedores[i];
+					aniadirVentas.writeObject(vendedor);
+				}else {
+					Vendedor vendedor = listaVendedores[i];
+					aniadirVentasCabecera.writeObject(vendedor);
+				}
+				
+				if(listaVendedores[i+1] == null) {
+					salir = true;
+				}
+				
+			}
+			
+			aniadirZonas.close();
+			aniadirZonasCabecera.close();
 			aniadirVentasCabecera.close();
 			aniadirVentas.close();
 			
@@ -555,4 +603,7 @@ public class Main {
 		}
 	}
 	
+	public static void listarZonas() {
+		
+	}
 }
