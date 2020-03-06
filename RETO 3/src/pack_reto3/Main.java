@@ -620,63 +620,34 @@ public class Main {
 			
 			leerZonas.close();
 			
-			System.out.println("Meses:                      1    2    3   4   5   6   7   8   9   10   11   12");
 			
 			System.out.print("Ventas de la zona Norte: ");
-			for(int i = 0; i < norte.getVentasMensuales().length && !salir; i++) {
-				if(norte.getVentasMensuales()[i] == 0) {
-					salir = true;
-				}else {
-					System.out.print(norte.getVentasMensuales()[i] + "   ");
-				}
-				
-				if(norte.getVentasMensuales()[i+1] == 0) {
-					salir = true;
-				}
+			for(int i = 0; i < norte.getVentasMensuales().length; i++) {
+
+				System.out.print(norte.getVentasMensuales()[i] + "   ");
+		
 			}
 			System.out.println("");
 			
 			System.out.print("Ventas de la zona Sur: ");
-			for(int i = 0; i < sur.getVentasMensuales().length && !salir; i++) {
-				if(sur.getVentasMensuales()[i] == 0) {
-					salir = true;
-				}else {
-					System.out.print(sur.getVentasMensuales()[i] + "   ");
-				}
-				
-				if(sur.getVentasMensuales()[i+1] == 0) {
-					salir = true;
-				}
+			for(int i = 0; i < sur.getVentasMensuales().length; i++) {
+				System.out.print(sur.getVentasMensuales()[i] + "   ");
+	
 			}
 			System.out.println("");
 			
 			System.out.print("Ventas de la zona Este: ");
 			for(int i = 0; i < este.getVentasMensuales().length && !salir; i++) {
-				if(este.getVentasMensuales()[i] == 0) {
-					salir = true;
-				}else {
-					System.out.print(este.getVentasMensuales()[i] + "   ");
-				}
 				
-				if(este.getVentasMensuales()[i+1] == 0) {
-					salir = true;
-				}
-				System.out.println("");
+				System.out.print(este.getVentasMensuales()[i] + "   ");
+
 			}
 			System.out.println("");
 			
 			System.out.print("Ventas de la zona Oeste: ");
 			for(int i = 0; i < oeste.getVentasMensuales().length && !salir; i++) {
-				if(oeste.getVentasMensuales()[i] == 0) {
-					salir = true;
-				}else {
-					System.out.print(oeste.getVentasMensuales()[i] + "   ");
-				}
-				
-				if(oeste.getVentasMensuales()[i+1] == 0) {
-					salir = true;
-				}
-				System.out.println("");
+				System.out.print(oeste.getVentasMensuales()[i] + "   ");
+
 			}
 			System.out.println("");
 			System.out.println("");
