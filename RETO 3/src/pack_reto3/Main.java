@@ -103,6 +103,11 @@ public class Main {
 	}
 	
 	public static void aniadirCliente() {
+		/*
+		 * En el metodo de aniadirCliente() lo que se hace es pedir por pantalla los atributos del objeto
+		 * persona para despues construirlos y añadirlos al fichero de objetos ademas de ir guardandolo en
+		 * un arrayList para futuros metodos.
+		 */
 		String NIF, nombre, direccion;
 		int telefono, deuda;
 		try {
@@ -148,29 +153,39 @@ public class Main {
 	}
 
 	public static void leerFichero() throws ClassNotFoundException, IOException, FileNotFoundException {
-			File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
-			FileInputStream fis = new FileInputStream(fichero);
-			ObjectInputStream ficheroLectura = new ObjectInputStream(fis);
-			Cliente c;
+		/*
+		 * En el metodo de leerFichero() lo que se hace es recorrer el contenido del fichero linea a linea
+		 * y mostrando el contenido del fichero.
+		 */
+		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
+		FileInputStream fis = new FileInputStream(fichero);
+		ObjectInputStream ficheroLectura = new ObjectInputStream(fis);
+		Cliente c;
 			
-			try {	
-				while(true) {
-					c = (Cliente) ficheroLectura.readObject();
-					System.out.printf("\nCliente: %s\n",c.toString());
-				}			
-			} catch(ClassNotFoundException e){
+		try {	
+			while(true) {
+				c = (Cliente) ficheroLectura.readObject();
+				System.out.printf("\nCliente: %s\n",c.toString());
+			}			
+		} catch(ClassNotFoundException e){
 				
-		    } catch(EOFException e){
+		} catch(EOFException e){
 		    
-			} catch(IOException e){
+		} catch(IOException e){
 				
-			} finally {
-				fis.close();
-				ficheroLectura.close();
-			}				
+		} finally {
+			fis.close();
+			ficheroLectura.close();
+		}				
 	}
 	
 	public static void buscarClientes() throws IOException, ClassNotFoundException {
+		/*
+		 * En el metodo de buscarClientes() lo que se hace es introducir por teclado un DNI y compararlo con
+		 * los DNIs de todos los objetos escritos en el fichero, una vez encuentra un dni igual al escrito
+		 * por teclado muestra un mensaje diciendo que existe y muestra los datos del cliente, de lo contrario
+		 * muestra un mensaje diciendo que el cliente no existe.
+		 */
 		Cliente c = null;
 		String compDNI;
 		boolean encontrado = false;
@@ -203,6 +218,13 @@ public class Main {
 	}
 	
 	public static void borrarCliente() throws IOException, ClassNotFoundException {
+		/*
+		 * En el metodo de borrarCliente() lo que se hace es introducir por teclado un DNI y al igual que en
+		 * el metodo de buscarClientes() solo que el contenido del fichero esta almacenado en el arrayList
+		 * copiaLista por tanto lo que hace es que si el DNI escrito existe, borra dicho DNI del arrayList
+		 * borra el contenido del fichero y escribe todo el contenido del arrayList en el fichero con el
+		 * objeto borrado.
+		 */
 		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
 		fichero.delete();
 		
@@ -246,12 +268,21 @@ public class Main {
 	}
 	
 	public static void borrarFichero() {
+		/*
+		 * El metodo borrarFichero() basicamente lo que hace es ir a la ruta del archivo CLIENTES.DAT y procede
+		 * a borrarlo mediante el comando delete() de la clase File.
+		 */
 		File fichero = new File("C:\\RETO3ARCHIVOS\\CLIENTES.DAT");
 		fichero.delete();
 		System.out.println("EL FICHERO SE BORRO COMPLETAMENTE");
 	}
 	
 	public static void informeDeudas() throws IOException {
+		/*
+		 * El metodo informeDeudas() lo que hace es coger el contenido del ArrayList copiaLista, es decir, el
+		 * contenido definitivo del fichero CLIENTES.DAT, con borrados (en el caso de que se hallan realizado)
+		 * hechos, por tanto crea un nuevo fichero con ese contenido llamado DEUDAS.txt.
+		 */
 		Cliente cliente;
 		File deudas = new File("C:\\RETO3ARCHIVOS\\DEUDAS.txt");
 		for(int i = 0; i < copiaLista.size(); i++) {
@@ -291,6 +322,12 @@ public class Main {
 	}
 
 	public static void cargarVendedores() {
+		/*
+		 * En el metodo cargarVendedores() lo que se hace es recorrer el array de 12 posiciones
+		 * del objeto vendedores con un while(true) para que mientras tenga objetos definidos
+		 * los lea desde el fichero Vendedores.dat hasta no haber mas, ademas establece las ventas
+		 * a 0.
+		 */
 		int cont = 0;
 		
 		File ruta = new File("C:\\RETO3");
@@ -357,6 +394,11 @@ public class Main {
 	}
 	
 	public static void aniadirVendedores() throws IOException {
+		/*
+		 * El metodo aniadirVendedores() usa la misma estructura que el metodo de aniadirClientes(), es decir,
+		 * pide por teclado los parametros necesarios para definir un objeto de tipo Vendedor y cada vez que
+		 * creamos uno se añade automaticamente al fichero Vendedores.dat.
+		 */
 		File ruta = new File("C:\\RETO3");
 		File fichero = new File(ruta, "Vendedores.dat");
 		if(!ruta.exists()) {
@@ -397,6 +439,11 @@ public class Main {
 	}
 	
 	public static void listarVendedores() throws IOException {
+		/*
+		 * El metodo de listarVendedores() es equivalente al metodo de leerFichero() (encargado de leer el fichero
+		 * donde se almacenan los clientes), por tanto, este metodo lo que hace es mostrarnos por pantalla los
+		 * vendedores que hay almacenados en el fichero Vendedores.dat.
+		 */
 		String mensaje;
 		File ruta = new File("C:\\RETO3");
 		File fichero = new File(ruta, "Vendedores.dat");
@@ -423,6 +470,11 @@ public class Main {
 	}
 	
 	public static void copiaSeguridad() throws IOException {
+		/*
+		 * El metodo copiaSeguridad() es muy parecido al metodo informeDeudas() (el cual se encarga de crear un fichero
+		 * con las deudas de cada cliente) solo que aqui la diferencia es que se emplea la clase GregorianCalendar() para
+		 * establecer el nombre del fichero con la fecha actual del sistema.
+		 */
 		String dia, mes, anio;
 		Scanner sc = new Scanner(System.in);
 		
@@ -469,8 +521,12 @@ public class Main {
 					// TODO Auto-generated catch block
 		}
 	}
-	
+
 	public static void volcarVentas() throws IOException {
+		/*
+		 * El metodo volcarVentas() guarda en el fichero las ventas de los clientes clasificandolas por zona y crea el
+		 * fichero VentasZona.dat, al terminar su ejecucion carga las ventas de los vendedores a 0.
+		 */
 		Scanner sc = new Scanner(System.in);
 		int mes, cont = 0;
 		Vendedor[] listaVendedores = new Vendedor[12];
@@ -599,6 +655,10 @@ public class Main {
 	}
 	
 	public static void listarZonas() throws IOException {
+		/*
+		 * El metodo listarZonas() es como cualquier metodo anterior de listar un fichero, es decir, el metodo este lo 
+		 * que hace es mostrar el fichero VentasZona.dat por pantalla.
+		 */
 		boolean salir = false;
 		
 		File ruta = new File("C:\\RETO3");
